@@ -6,6 +6,8 @@ services:
       - "8080:8080"
     networks:
       - app-network
+    volumes:
+      - petclinic-logs:/var/log/petclinic
 
   prometheus:
     image: prom/prometheus
@@ -28,6 +30,31 @@ services:
       - app-network
     depends_on:
       - prometheus
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    networks:
+      - app-network
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - loki-data:/loki
+
+  promtail:
+    image: grafana/promtail:latest
+    volumes:
+      - petclinic-logs:/var/log/petclinic
+      - ./promtail-config.yaml:/etc/promtail/promtail.yml
+    command: -config.file=/etc/promtail/promtail.yml
+    networks:
+      - app-network
+    depends_on:
+      - loki
+
+volumes:
+  petclinic-logs:
+  loki-data:
 
 networks:
   app-network:
