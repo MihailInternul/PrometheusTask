@@ -6,13 +6,13 @@ positions:
   filename: /tmp/positions.yaml
 
 clients:
-  - url: http://localhost:3100/loki/api/v1/push
+  - url: http://loki:3100/loki/api/v1/push
 
 scrape_configs:
-  - job_name: spring-boot
+  - job_name: petclinic
     static_configs:
-    - targets:
-        - localhost
-      labels:
-        job: spring-boot
-        __path__: /Users/mfotache/PrometheusTask/spring-petclinic/target/spring-petclinic.log
+      - targets:
+          - localhost
+        labels:
+          job: petclinic
+          __path__: /var/log/petclinic/*log
